@@ -30,12 +30,27 @@ data UnvalidatedOrderLine =
     AND UnvalidatedOrderQuantity
 
 // --- validated state ---
-data ValidatedOrder = ...
-data ValidatedOrderLine = ...
+data ValidatedOrder = 
+    ValidatedCustomerInfo
+    AND ValidatedShippingAddress
+    AND ValidatedBillingAddress
+    AND list of ValidatedOrderLine
+
+data ValidatedOrderLine = 
+    ValidatedProductCode
+    AND ValidatedOrderQuantity
 
 // --- priced state ---
-data PricedOrder = ...
-data PricedorderLine = ...
+data PricedOrder = 
+    ValidatedCustomerInfo
+    AND ValidatedShippingAddress
+    AND ValidatedBillingAddress
+    AND list of PricedOrderLine
+    AND AmountToBill
+
+data PricedorderLine = 
+    ValidatedOrderLine
+    AND LinePrice
 
 // --- output events ---
 data OrderAcknowledgmentSent = ...

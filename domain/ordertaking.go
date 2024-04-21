@@ -50,19 +50,46 @@ type (
 	BillingAmount   any // undefined yet
 )
 
-type Order[T1 ProductCode, T2 OrderQuantity] struct{
-	ID OrderID
-	CustomerID CustomerID
-	ShippingAddress ShippingAddress
-	BillingAddress BillingAddress
-	OrderLines []OrderLine[T1, T2]
-	AmountToBill BillingAmount
+type OrderLine[T1 ProductCode, T2 OrderQuantity] struct {
+	ID            OrderLineID
+	OrderID       OrderID
+	ProductCode   T1
+	OrderQuantity T2
+	Priced        Price
 }
 
-type OrderLine[T1 ProductCode, T2 OrderQuantity] struct{
-	ID OrderLineID
-	OrderID OrderID
-	ProductCode T1
-	OrderQuantity T2
-	Priced Price
+// Orderの状態遷移を型で表現
+// Unvalidated Order -> Validated Order -> Priced Order
+type Order interface {
+	UnvalidatedOrder | ValidatedOrder | PricedOrder
 }
+
+type (
+	UnvalidatedOrderLine any // undefined yet
+	ValidatedOrderLine   any // undefined yet
+	PricedOrderLine      any // undefined yet
+	UnvalidatedOrder     struct {
+		OrderID         OrderID
+		CustomerInfo    CustomerInfo
+		ShippingAddress ShippingAddress
+		BillingAddress  BillingAddress
+		OrderLines      []UnvalidatedOrderLine
+	}
+
+	ValidatedOrder struct {
+		OrderID         OrderID
+		CustomerInfo    CustomerInfo
+		ShippingAddress ShippingAddress
+		BillingAddress  BillingAddress
+		OrderLines      []ValidatedOrderLine
+	}
+
+	PricedOrder struct {
+		OrderID         OrderID
+		CustomerInfo    CustomerInfo
+		ShippingAddress ShippingAddress
+		BillingAddress  BillingAddress
+		OrderLines      []PricedOrderLine
+		AmountToBill    BillingAmount
+	}
+)
