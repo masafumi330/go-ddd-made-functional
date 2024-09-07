@@ -1,4 +1,4 @@
-package ordertaking
+package domain
 
 // ------------------
 // Simple types (Value Objects)
@@ -43,18 +43,34 @@ type (
 )
 
 type (
-	CustomerInfo    any // undefined yet
-	ShippingAddress any // undefined yet
-	BillingAddress  any // undefined yet
-	Price           any // undefined yet
-	BillingAmount   any // undefined yet
+	CustomerInfo any // undefined yet
+
+	BillingAddress any // undefined yet
+	Price          any // undefined yet
+	BillingAmount  any // undefined yet
 )
 
-type OrderLine[T1 ProductCode, T2 OrderQuantity] struct {
+type (
+	ShippingAddress interface {
+		UnvalidatedAddress | ValidatedAddress
+	} // undefined yet
+
+	UnvalidatedAddress string
+	ValidatedAddress   string
+)
+
+//	type OrderLine[T1 ProductCode, T2 OrderQuantity] struct {
+//		ID            OrderLineID
+//		OrderID       OrderID
+//		ProductCode   T1
+//		OrderQuantity T2
+//		Priced        Price
+//	}
+type OrderLine struct {
 	ID            OrderLineID
 	OrderID       OrderID
-	ProductCode   T1
-	OrderQuantity T2
+	ProductCode   Widget
+	OrderQuantity Unit
 	Priced        Price
 }
 
@@ -65,30 +81,30 @@ type Order interface {
 }
 
 type (
-	UnvalidatedOrderLine any // undefined yet
-	ValidatedOrderLine   any // undefined yet
-	PricedOrderLine      any // undefined yet
+	UnvalidatedOrderLine OrderLine
+	ValidatedOrderLine   OrderLine // undefined yet
+	PricedOrderLine      any       // undefined yet
 	UnvalidatedOrder     struct {
 		OrderID         OrderID
 		CustomerInfo    CustomerInfo
-		ShippingAddress ShippingAddress
-		BillingAddress  BillingAddress
+		ShippingAddress UnvalidatedAddress
+		BillingAddress  UnvalidatedAddress
 		OrderLines      []UnvalidatedOrderLine
 	}
 
 	ValidatedOrder struct {
 		OrderID         OrderID
 		CustomerInfo    CustomerInfo
-		ShippingAddress ShippingAddress
-		BillingAddress  BillingAddress
+		ShippingAddress ValidatedAddress
+		BillingAddress  ValidatedAddress
 		OrderLines      []ValidatedOrderLine
 	}
 
 	PricedOrder struct {
 		OrderID         OrderID
 		CustomerInfo    CustomerInfo
-		ShippingAddress ShippingAddress
-		BillingAddress  BillingAddress
+		ShippingAddress ValidatedAddress
+		BillingAddress  ValidatedAddress
 		OrderLines      []PricedOrderLine
 		AmountToBill    BillingAmount
 	}
